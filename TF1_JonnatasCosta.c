@@ -48,16 +48,32 @@ int main(void)
 	int tamanho;
 	int listar;
 
+	int opcao;
 	// Algoritimo
+	
 	memset(numero_repeticoes, 0, 100);
-	tamanho = cadastro(legenda);
-
-	system("clear");
-	printf("Listar dados (S-sim): ");
-	getchar();
-	listar = getchar();
-	if(listar=='S' || listar=='s')
-		exibirLegenda(legenda, tamanho);
+	do{
+		printf("Opções\n");
+		printf("\n 1. Cadastrar novo candidato");
+		printf("\n 2. Modificar dados do candidato");
+		printf("\n 3. Listar todos os candidatos cadastrados");
+		printf("\n 4. Selecionar os candidatos cadastrados que estão envolvidos com a Lava Jato");
+		printf("\n 5. Apagar arquivo com cadastros de todos candidatos");
+		printf("\n 0. Sair do programa\n");
+		scanf("%d", &opcao);
+		switch(opcao)
+		{
+			case 1:
+				system("clear");
+				getchar();
+				tamanho = cadastro(legenda);
+				break;
+			case 3:
+				system("clear");
+				exibirLegenda(legenda, tamanho);
+				break;
+		}
+	}while(opcao!=0);
 	return 0;
 }
 
