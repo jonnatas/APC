@@ -27,6 +27,7 @@ typedef struct Legenda{
 	char sigla[MAXPARTIDO];
 }Legenda;
 
+int modificar(Legenda *legenda, int numeroLegenda, int tamanho);
 int cadastro(Legenda *legenda);
 void exibirLegenda(Legenda *legenda, int tamanho);
 void validarNumero(int numeroLegenda, Legenda *legenda, int posicao);
@@ -45,10 +46,7 @@ int main(void)
 	setlocale(LC_ALL, "Portuguese");
 	// Declaracoes
 	Legenda legenda[MAX_TAMANHO_LEGENDA];
-	int tamanho;
-	int listar;
-
-	int opcao;
+	int tamanho=0, listar,numeroLegenda, opcao;
 	// Algoritimo
 	
 	memset(numero_repeticoes, 0, 100);
@@ -68,6 +66,13 @@ int main(void)
 				getchar();
 				tamanho = cadastro(legenda);
 				break;
+			case 2:
+				system("clear");
+				getchar();
+				printf("Insira o numero da legenda do candidato");
+				scanf("%d", &numeroLegenda);
+				modificar(legenda, numeroLegenda, tamanho);
+				break;
 			case 3:
 				system("clear");
 				exibirLegenda(legenda, tamanho);
@@ -76,6 +81,38 @@ int main(void)
 	}while(opcao!=0);
 	return 0;
 }
+
+//Objetivo: Modificar dados de uma legenda  
+//Entrada: legenda e posicao da legenda.
+//Retorno: nenhum.
+int modificar(Legenda *legenda, int numeroLegenda, int tamanho){
+	int i;	
+	getchar();
+	for(i=0; i<=tamanho; i++){
+		if(legenda[i].candidato.numeroLegenda == numeroLegenda){
+			//if your use windows, use sytem("cls");
+			system("clear");
+			printf("Insira os dados: \n");
+			printf("Candidato %d\n", i+1);
+
+			printf("Nome completo: ");
+			fgets(legenda[i].candidato.nome, MAXTAMANHONOME, stdin);
+			validarNome(legenda, i);
+
+			printf("Sigla do partido: ");
+			fgets(legenda[i].sigla, MAXPARTIDO, stdin);
+			validarSigla(legenda, i);
+
+			printf("Situação na lavajato: ");
+			legenda[i].candidato.lavaJato = getchar();
+			validarSituacao(legenda[i].candidato.lavaJato);
+			return 1;
+		}
+	}
+	printf("Não encontrou-se a legenda %d ",numeroLegenda);
+	return 0;
+}
+
 
 //Objetivo: Cadastrar todas as legendas  
 //Entrada: legenda e posicao da legenda.
