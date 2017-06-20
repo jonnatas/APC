@@ -28,7 +28,7 @@ typedef struct Legenda{
 }Legenda;
 
 int modificar(Legenda *legenda, int numeroLegenda, int tamanho);
-int cadastro(Legenda *legenda);
+int cadastro(Legenda *legenda, int tamanho);
 void exibirLegenda(Legenda *legenda, int tamanho);
 void exibirLegendaLavajato(Legenda *legenda, int tamanho);
 void validarNumero(int numeroLegenda, Legenda *legenda, int posicao);
@@ -65,7 +65,7 @@ int main(void)
 			case 1:
 				system("clear");
 				getchar();
-				tamanho = cadastro(legenda);
+				tamanho = cadastro(legenda, tamanho);
 				break;
 			case 2:
 				system("clear");
@@ -101,15 +101,15 @@ int modificar(Legenda *legenda, int numeroLegenda, int tamanho){
 			printf("Insira os dados: \n");
 			printf("Candidato %d\n", i+1);
 
-			printf("Nome completo: ");
+			printf("Nome atual ( %s ), inserir novo: ", legenda[i].candidato.nome);
 			fgets(legenda[i].candidato.nome, MAXTAMANHONOME, stdin);
 			validarNome(legenda, i);
 
-			printf("Sigla do partido: ");
+			printf("Sigla atual ( %s ), inserir nova: ", legenda[i].sigla);
 			fgets(legenda[i].sigla, MAXPARTIDO, stdin);
 			validarSigla(legenda, i);
 
-			printf("Situação na lavajato: ");
+			printf("Situação na lavajato (%c), inserir nova: ", legenda[i].candidato.lavaJato);
 			legenda[i].candidato.lavaJato = getchar();
 			validarSituacao(legenda[i].candidato.lavaJato);
 			return 1;
@@ -123,14 +123,19 @@ int modificar(Legenda *legenda, int numeroLegenda, int tamanho){
 //Objetivo: Cadastrar todas as legendas  
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
-int cadastro(Legenda *legenda){
+int cadastro(Legenda *legenda, int tamanho){
 	int i;
 	char encerrar;
 	int numeroLegenda;
 
 	printf("Insira os dados dos canditados: \n");
 
-	for(i=0; i<MAX_TAMANHO_LEGENDA; i++){
+	if(tamanho>0){
+		i=tamanho+1;
+	}
+	else
+		i=tamanho;
+	for(i; i<MAX_TAMANHO_LEGENDA; i++){
 		//if your use windows, use sytem("cls");
 		system("clear");
 		printf("Candidato %d\n", i+1);
