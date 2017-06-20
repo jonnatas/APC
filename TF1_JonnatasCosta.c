@@ -30,6 +30,7 @@ typedef struct Legenda{
 int modificar(Legenda *legenda, int numeroLegenda, int tamanho);
 int cadastro(Legenda *legenda);
 void exibirLegenda(Legenda *legenda, int tamanho);
+void exibirLegendaLavajato(Legenda *legenda, int tamanho);
 void validarNumero(int numeroLegenda, Legenda *legenda, int posicao);
 void validarNome(Legenda *legenda, int posicao);
 void validarSigla(Legenda *legenda, int posicao);
@@ -76,6 +77,11 @@ int main(void)
 			case 3:
 				system("clear");
 				exibirLegenda(legenda, tamanho);
+				break;
+			case 4:
+				system("clear");
+				exibirLegendaLavajato(legenda, tamanho);
+				
 				break;
 		}
 	}while(opcao!=0);
@@ -155,15 +161,29 @@ int cadastro(Legenda *legenda){
 	return i;
 }
 
+//Objetivo: Exibir candidatos com problemas na Lava Jato 
+//Entrada: legenda e posicao da legenda.
+//Retorno: nenhum.
+void exibirLegendaLavajato(Legenda *legenda, int tamanho){
+	int i;
+	for(i=0; i<=tamanho; i++){
+		if(legenda[i].candidato.lavaJato == 'S'){
+			printf("Candidato %d\n", i+1);
+			printf("\tNunero: %d\n",legenda[i].candidato.numeroLegenda);
+			printf("\tNome: %s\n", legenda[i].candidato.nome);
+			printf("\tSigla: %s\n", legenda[i].sigla);
+			printf("\tlava Jato: %c\n", legenda[i].candidato.lavaJato);
+		}
+	}
+}
+
+
 //Objetivo: Exibir todas as legendas  
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
 void exibirLegenda(Legenda *legenda, int tamanho){
 	int i;
-	int numeroLegenda;
 	for(i=0; i<=tamanho; i++){
-		numeroLegenda=legenda[i].candidato.numeroLegenda;
-		int numeroLegenda;
 		printf("Candidato %d\n", i+1);
 		printf("\tNunero: %d\n",legenda[i].candidato.numeroLegenda);
 		printf("\tNome: %s\n", legenda[i].candidato.nome);
