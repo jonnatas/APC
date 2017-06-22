@@ -27,16 +27,17 @@ typedef struct Legenda{
 	char sigla[MAXPARTIDO];
 }Legenda;
 
-int modificar(Legenda *legenda, int numeroLegenda, int tamanho);
+int modificar(Legenda *legenda, int tamanho);
 int cadastro(Legenda *legenda, int tamanho);
 void exibirLegenda(Legenda *legenda, int tamanho);
 void exibirLegendaLavajato(Legenda *legenda, int tamanho);
-void validarNumero(int numeroLegenda, Legenda *legenda, int posicao);
+void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao);
 void validarNome(Legenda *legenda, int posicao);
 void validarSigla(Legenda *legenda, int posicao);
 void verificarSiglaVazio(Legenda *legenda, int posicao);
 int validarSituacao(int lavaJato);
 void zerarNumeros(Legenda *legenda);
+int inicializarLegenda(Legenda *legenda);
 
 //Variavel global para setar as repetições e evitar um laço para verificar as mesmas o(n) na busca
 int numero_repeticoes[100];
@@ -47,12 +48,14 @@ int main(void)
 	setlocale(LC_ALL, "Portuguese");
 	// Declaracoes
 	Legenda legenda[MAX_TAMANHO_LEGENDA];
-	int tamanho=0, listar,numeroLegenda, opcao;
+	int tamanho, listar,numeroLegenda, opcao;
 	// Algoritimo
-	
+
+	//tamanho = inicializarLegenda(legenda);
+
 	memset(numero_repeticoes, 0, 100);
 	do{
-		printf("Opções\n");
+		printf("\tOpções\n");
 		printf("\n 1. Cadastrar novo candidato");
 		printf("\n 2. Modificar dados do candidato");
 		printf("\n 3. Listar todos os candidatos cadastrados");
@@ -69,10 +72,7 @@ int main(void)
 				break;
 			case 2:
 				system("clear");
-				getchar();
-				printf("Insira o numero da legenda do candidato");
-				scanf("%d", &numeroLegenda);
-				modificar(legenda, numeroLegenda, tamanho);
+				modificar(legenda, tamanho);
 				break;
 			case 3:
 				system("clear");
@@ -81,41 +81,71 @@ int main(void)
 			case 4:
 				system("clear");
 				exibirLegendaLavajato(legenda, tamanho);
-				
+
 				break;
 		}
 	}while(opcao!=0);
 	return 0;
 }
+//Objetivo: Inicializar a struct com os dados salvos no arquivo
+//Entrada: Ponteiro para o arquivo e a legenda.
+//Retorno: nenhum.
+int inicializarLegenda(Legenda *legenda){
+	int c;
+	int i=0;
+
+	FILE *arquivo;
+	if(!(arquivo=fopen("legenda.bin", "r")))
+		arquivo=fopen("legenda.bin", "w+");
+	if(arquivo==NULL){
+		printf("Error ao abrir o arquivo");
+		return 1;
+	}
+	while(!feof(arquivo)){
+		printf("%d --> \n", i);
+		fgets(legenda[i].candidato.nome, MAXTAMANHONOME, arquivo);
+		fscanf(arquivo, "%d", &legenda[i].candidato.numeroLegenda);
+		fgets(legenda[i].sigla, MAX_TAMANHO_LEGENDA, arquivo);
+		fscanf(arquivo , "%c", &legenda[i].candidato.lavaJato);
+		++i;
+	}
+
+	fclose(arquivo);
+	return i+1;
+}
 
 //Objetivo: Modificar dados de uma legenda  
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
-int modificar(Legenda *legenda, int numeroLegenda, int tamanho){
-	int i;	
+int modificar(Legenda *legenda, int tamanho){
+	int i;
+	int numeroLegenda;
+	getchar();
+	printf("Insira o numero da legenda do candidato");
+	scanf("%d", &numeroLegenda);
 	getchar();
 	for(i=0; i<=tamanho; i++){
 		if(legenda[i].candidato.numeroLegenda == numeroLegenda){
 			//if your use windows, use sytem("cls");
 			system("clear");
-			printf("Insira os dados: \n");
-			printf("Candidato %d\n", i+1);
+			printf("\tInsira os dados: \n");
+			printf("\tCandidato %d\n", i+1);
 
-			printf("Nome atual ( %s ), inserir novo: ", legenda[i].candidato.nome);
+			printf("\tNome atual ( %s ), inserir novo: ", legenda[i].candidato.nome);
 			fgets(legenda[i].candidato.nome, MAXTAMANHONOME, stdin);
 			validarNome(legenda, i);
 
-			printf("Sigla atual ( %s ), inserir nova: ", legenda[i].sigla);
+			printf("\tSigla atual ( %s ), inserir nova: ", legenda[i].sigla);
 			fgets(legenda[i].sigla, MAXPARTIDO, stdin);
 			validarSigla(legenda, i);
 
-			printf("Situação na lavajato (%c), inserir nova: ", legenda[i].candidato.lavaJato);
+			printf("\tSituação na lavajato (%c), inserir nova: ", legenda[i].candidato.lavaJato);
 			legenda[i].candidato.lavaJato = getchar();
 			validarSituacao(legenda[i].candidato.lavaJato);
 			return 1;
 		}
 	}
-	printf("Não encontrou-se a legenda %d ",numeroLegenda);
+	printf("\tNão encontrou-se a legenda %d ",numeroLegenda);
 	return 0;
 }
 
@@ -124,38 +154,47 @@ int modificar(Legenda *legenda, int numeroLegenda, int tamanho){
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
 int cadastro(Legenda *legenda, int tamanho){
-	int i;
+	int i=0;
 	char encerrar;
-	int numeroLegenda;
+	char numeroLegenda[10];
+	FILE *file = fopen("legenda.bin", "ab+");
 
 	printf("Insira os dados dos canditados: \n");
 
 	if(tamanho>0){
 		i=tamanho+1;
 	}
-	else
+	else{
 		i=tamanho;
+	}
 	for(i; i<MAX_TAMANHO_LEGENDA; i++){
 		//if your use windows, use sytem("cls");
 		system("clear");
-		printf("Candidato %d\n", i+1);
+		printf("\tCandidato %d\n", i+1);
 
-		printf("Nome completo: ");
+		printf("\tNúmero: ");
+		fgets(numeroLegenda, 10, stdin);
+		validarNumero(numeroLegenda, legenda, i);
+
+		printf("\tNome completo: ");
 		fgets(legenda[i].candidato.nome, MAXTAMANHONOME, stdin);
 		validarNome(legenda, i);
 
-		printf("Sigla do partido: ");
+		printf("\tSigla do partido: ");
 		fgets(legenda[i].sigla, MAXPARTIDO, stdin);
 		validarSigla(legenda, i);
 
-		printf("Número: ");
-		scanf("%d", &numeroLegenda);
-		validarNumero(numeroLegenda, legenda, i);
-
-		getchar();
-		printf("Situação na lavajato: ");
+		printf("\tSituação na lavajato: ");
 		legenda[i].candidato.lavaJato = getchar();
 		validarSituacao(legenda[i].candidato.lavaJato);
+
+		//fwrite(&legenda[i], sizeof(legenda[i]), 1, file);
+
+		//fprintf(file,"%d\n", i);
+		fprintf(file,"%d\n", legenda[i].candidato.numeroLegenda);
+		fprintf(file,"%s\n", legenda[i].candidato.nome);
+		fprintf(file,"%s\n", legenda[i].sigla);
+		fprintf(file,"%c\n", legenda[i].candidato.lavaJato);
 
 		getchar();
 		printf("Encerrar (S-sim)");
@@ -163,6 +202,9 @@ int cadastro(Legenda *legenda, int tamanho){
 		if(encerrar=='S' || encerrar=='s')
 			break;
 	}
+	fclose(file);
+	if(tamanho==0)
+		++i;
 	return i;
 }
 
@@ -243,24 +285,27 @@ void validarSigla(Legenda *legenda, int posicao){
 //Entrada: situação
 //Retorno: situação devidamente validada
 int validarSituacao(int lavajato){
-	
+
 	while(lavajato != 'S' && lavajato != 'N'){
 		printf("Error, valor incorreto, insira (S-Sim ou N-Não): ");
 		lavajato = getchar();	
 	}
-	
+
 	return lavajato;
 }
 
 //Objetivo: validar numero da legenda
 //Entrada: numero da legenda
 //Retorno: sem retorno
-void validarNumero(int numeroLegenda, Legenda *legenda, int posicao){
+void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao){
 	int i;
-	while(numeroLegenda<10 || numeroLegenda>100 || numero_repeticoes[numeroLegenda] !=0){
+	int numeroLegendaConvertido = atoi(numeroLegenda);
+
+	while(numeroLegendaConvertido<10 || numeroLegendaConvertido>100 || numero_repeticoes[numeroLegendaConvertido]){
 		printf("Valor errado. insira novamente: ");
-		scanf("%d", &numeroLegenda);
+		fgets(numeroLegenda, 10, stdin);
+		numeroLegendaConvertido = atoi(numeroLegenda);
 	}
-	++numero_repeticoes[numeroLegenda];
-	legenda[posicao].candidato.numeroLegenda = numeroLegenda;
+	++numero_repeticoes[numeroLegendaConvertido];
+	legenda[posicao].candidato.numeroLegenda = numeroLegendaConvertido;
 }
