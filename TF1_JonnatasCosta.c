@@ -43,7 +43,7 @@ void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao);
 void validarNome(Legenda *legenda, int posicao);
 void validarSigla(Legenda *legenda, int posicao);
 void verificarSiglaVazio(Legenda *legenda, int posicao);
-int validarSituacao(char lavaJato[3]);
+int validarSituacao(int lavaJato);
 void zerarNumeros(Legenda *legenda);
 int inicializarLegenda(Legenda *legenda);
 int apagarArquivo();
@@ -149,7 +149,7 @@ int apagarArquivo(){
 int modificar(Legenda *legenda, int tamanho){
 	int i;
 	int numeroLegenda;
-	char lavaJato[3];
+	char lavaJato;
 	getchar();
 	printf("Insira o numero da legenda do candidato");
 	scanf("%d", &numeroLegenda);
@@ -170,8 +170,9 @@ int modificar(Legenda *legenda, int tamanho){
 			validarSigla(legenda, i);
 
 			printf("\tSituação na lavaJato (%c), inserir nova: ", legenda[i].candidato.lavaJato);
-			fgets(lavaJato, 3, stdin);
-			legenda[i].candidato.lavaJato= validarSituacao(lavaJato);
+			lavaJato=getchar();
+			legenda[i].candidato.lavaJato = validarSituacao(lavaJato);
+			
 			return 1;
 		}
 	}
@@ -187,7 +188,7 @@ int cadastro(Legenda *legenda, int tamanho){
 	int i=0;
 	char encerrar;
 	char numeroLegenda[10];
-	char lavaJato[3];
+	char lavaJato;
 
 	FILE *file = fopen("legenda.bin", "ab+");
 
@@ -217,8 +218,8 @@ int cadastro(Legenda *legenda, int tamanho){
 		validarSigla(legenda, i);
 
 		printf("\tSituação na lavaJato: ");
-		fgets(lavaJato, 3, stdin);
-		legenda[i].candidato.lavaJato= validarSituacao(lavaJato);
+		lavaJato=getchar();
+		legenda[i].candidato.lavaJato = validarSituacao(lavaJato);
 
 		//fwrite(&legenda[i], sizeof(legenda[i]), 1, file);
 
@@ -334,16 +335,15 @@ void removerPulaLinha(char *palavra){
 //Objetivo: validar situação na lavaJato 
 //Entrada: situação
 //Retorno: situação devidamente validada
-int validarSituacao(char lavaJato[3]){
-	removerPulaLinha(lavaJato);
+int validarSituacao(int lavaJato){
 	
-	while((lavaJato[0] != 'S' && lavaJato[0] != 'N') || strlen(lavaJato)>1 ){
+	while((lavaJato != 'S' && lavaJato != 'N')){
+		int i;
 		printf(ANSI_COLOR_RED "\n\tError, valor incorreto, insira (S-Sim ou N-Não): \n" ANSI_COLOR_RESET );
-		fgets(lavaJato, 3, stdin);
-		removerPulaLinha(lavaJato);
+		lavaJato = getchar();
 	}
-
-	return lavaJato[0];
+	getchar();
+	return lavaJato;
 }
 
 //Objetivo: validar numero da legenda
