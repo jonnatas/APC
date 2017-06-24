@@ -150,8 +150,14 @@ int modificar(Legenda *legenda, int tamanho){
 	int i;
 	int numeroLegenda;
 	char lavaJato;
+	int cancelar;
 	getchar();
-	printf("Insira o numero da legenda do candidato");
+	printf("Cancelar e voltar? (Digite S): ");
+
+	cancelar = getchar();
+	if(cancelar=='S' || cancelar=='s')
+		return 0;
+	printf("Insira o numero da legenda do candidato: ");
 	scanf("%d", &numeroLegenda);
 	getchar();
 	for(i=0; i<=tamanho; i++){
@@ -249,7 +255,7 @@ int exibirLegendalavaJato(Legenda *legenda, int tamanho){
 		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
 		return 0;
 	}
-	for(i=0; i<=tamanho; i++){
+	for(i=0; i<tamanho; i++){
 		if(legenda[i].candidato.lavaJato == 'S'){
 			printf("Candidato %d\n", i+1);
 			printf("\tNunero: %d\n",legenda[i].candidato.numeroLegenda);
@@ -272,12 +278,18 @@ int exibirLegenda(Legenda *legenda, int tamanho){
 
 		return 0;
 	}
-	for(i=0; i<=tamanho; i++){
-		printf("Candidato %d\n", i+1);
-		printf("\tNunero: %d\n",legenda[i].candidato.numeroLegenda);
-		printf("\tNome: %s\n", legenda[i].candidato.nome);
-		printf("\tSigla: %s\n", legenda[i].sigla);
-		printf("\tlava Jato: %c\n", legenda[i].candidato.lavaJato);
+	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
+	
+	for(i=0; i<tamanho; i++){
+		printf("%d", i+1);
+		printf("\t\t%d",legenda[i].candidato.numeroLegenda);
+		printf("\t\t%s", legenda[i].candidato.nome);
+		printf("\t\t%s", legenda[i].sigla);
+		if(legenda[i].candidato.lavaJato=='S')
+			printf("\t\tLava Jato", legenda[i].candidato.lavaJato);
+		else
+			printf("\t\tFicha Limpa", legenda[i].candidato.lavaJato);
+		printf("\n");
 	}
 	return 1;
 }
