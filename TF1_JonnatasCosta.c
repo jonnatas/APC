@@ -110,7 +110,7 @@ int main(void)
 
 //Objetivo: Inicializar a struct com os dados salvos no arquivo
 //Entrada: Ponteiro para o arquivo e a legenda.
-//Retorno: nenhum.
+//Retorno: Total de itens lidos no arquivo.
 int inicializarLegenda(Legenda *legenda){
 	int c;
 	int i;
@@ -203,20 +203,21 @@ int modificar(Legenda *legenda, int tamanho){
 
 //Objetivo: Cadastrar todas as legendas  
 //Entrada: legenda e posicao da legenda.
-//Retorno: nenhum.
+//Retorno: Total de itens exibidos, 0 caso falhe na exibição.
 int cadastro(Legenda *legenda, int tamanho){
 	int i;
 	char encerrar, numeroLegenda[10], lavaJato;
 	FILE *file = fopen("legenda.bin", "ab+");
-
-	printf("TAMANHO NO CADASTRO %d #######\n", tamanho);
-	printf("Insira os dados dos canditados: \n");
-
-	printf("I NO CADASTRO %d #######\n", i);
 	
-	for(i; i<MAX_TAMANHO_LEGENDA; i++){
+	if(file	== NULL){
+		printf(ANSI_COLOR_RED "\n\tError ao apagar o arquivo!!!\n" ANSI_COLOR_RESET );
+		return 0;
+	}
+
+	printf("TAMANHO i - ---------------> %d\n\n", tamanho);
+	for(i=tamanho; i<MAX_TAMANHO_LEGENDA; i++){
 		//if your use windows, use sytem("cls");
-		//system("clear");
+		system("clear");
 		printf("\tCandidato %d\n", i+1);
 
 		printf("\tNúmero: ");
@@ -249,12 +250,9 @@ int cadastro(Legenda *legenda, int tamanho){
 		if(encerrar=='S' || encerrar=='s')
 			break;
 	}
-	
+	i++;
+	printf("TAMANHO i - ---------------> %d\n\n", i);
 	fclose(file);
-	if(tamanho==0)
-		++i;
-	printf("I FINAL CADASTRO %d #######\n", i);
-	
 	return i;
 }
 
