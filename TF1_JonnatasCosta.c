@@ -203,7 +203,7 @@ int modificar(Legenda *legenda, int tamanho){
 
 //Objetivo: Cadastrar todas as legendas  
 //Entrada: legenda e posicao da legenda.
-//Retorno: Total de itens exibidos, 0 caso falhe na exibição.
+//Retorno: Total de itens exibidos, 0 caso falhe.
 int cadastro(Legenda *legenda, int tamanho){
 	int i;
 	char encerrar, numeroLegenda[10], lavaJato;
@@ -214,7 +214,6 @@ int cadastro(Legenda *legenda, int tamanho){
 		return 0;
 	}
 
-	printf("TAMANHO i - ---------------> %d\n\n", tamanho);
 	for(i=tamanho; i<MAX_TAMANHO_LEGENDA; i++){
 		//if your use windows, use sytem("cls");
 		system("clear");
@@ -251,7 +250,7 @@ int cadastro(Legenda *legenda, int tamanho){
 			break;
 	}
 	i++;
-	printf("TAMANHO i - ---------------> %d\n\n", i);
+	
 	fclose(file);
 	return i;
 }
@@ -285,7 +284,6 @@ int exibirLegenda(Legenda *legenda, int tamanho){
 	int i;
 	if(strlen(legenda[0].candidato.nome)==0){
 		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
-
 		return 0;
 	}
 	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
