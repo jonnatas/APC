@@ -58,11 +58,12 @@ int main(void)
 	setlocale(LC_ALL, "Portuguese");
 	// Declaracoes
 	Legenda legenda[MAX_TAMANHO_LEGENDA];
-	int tamanho, listar,numeroLegenda, opcao;
+	int tamanho=0, listar,numeroLegenda;
+	int opcao;
 	// Algoritimo
 
-	//tamanho = inicializarLegenda(legenda);
-
+	(inicializarLegenda(legenda)>0) ? tamanho=inicializarLegenda(legenda) : tamanho=0;
+		
 	memset(numero_repeticoes, 0, 100);
 	do{
 		printf("\tOpções\n");
@@ -96,34 +97,50 @@ int main(void)
 				system("clear");
 				apagarArquivo();
 				break;
+			case 0:
+				break;
+			default:
+				system("clear");
+				printf(ANSI_COLOR_RED "\n\tError valor invalido, insira novamente \n" ANSI_COLOR_RESET );
+				break;
 		}
 	}while(opcao!=0);
 	return 0;
 }
+
 //Objetivo: Inicializar a struct com os dados salvos no arquivo
 //Entrada: Ponteiro para o arquivo e a legenda.
 //Retorno: nenhum.
 int inicializarLegenda(Legenda *legenda){
 	int c;
-	int i=0;
+	int i;
 
-	FILE *arquivo;
-	if(!(arquivo=fopen("legenda.bin", "r")))
-		arquivo=fopen("legenda.bin", "w+");
-	if(arquivo==NULL){
+	FILE *file;
+	if(!(file=fopen("legenda.bin", "r+"))){
+		file=fopen("legenda.bin", "w+");
+		fclose(file);
+		return 0;
+	}
+	if(file==NULL){
 		printf(ANSI_COLOR_RED "\n\tError ao abrir o arquivo \n" ANSI_COLOR_RESET );
+		fclose(file);
 		return 1;
 	}
-	while(!feof(arquivo)){
-		printf("%d --> \n", i);
-		fgets(legenda[i].candidato.nome, MAXTAMANHONOME, arquivo);
-		fscanf(arquivo, "%d", &legenda[i].candidato.numeroLegenda);
-		fgets(legenda[i].sigla, MAX_TAMANHO_LEGENDA, arquivo);
-		fscanf(arquivo , "%c", &legenda[i].candidato.lavaJato);
-		++i;
+	
+	rewind(file);
+	while(!feof(file)){
+		fscanf(file,"%d\n", &i);
+		fscanf(file,"%d\n", &legenda[i].candidato.numeroLegenda);
+		fgets(legenda[i].candidato.nome , MAXTAMANHONOME, file);
+		legenda[i].candidato.nome[strlen(legenda[i].candidato.nome)-1]='\0';
+		fgets(legenda[i].sigla , MAX_TAMANHO_LEGENDA, file);
+		legenda[i].sigla[strlen(legenda[i].sigla)-1]='\0';
+		fscanf(file,"%c\n", &legenda[i].candidato.lavaJato);
+		
+		printf("%d %d [%s] {%s} (%c)\n", i, legenda[i].candidato.numeroLegenda, legenda[i].candidato.nome, legenda[i].sigla, legenda[i].candidato.lavaJato);
 	}
 
-	fclose(arquivo);
+	fclose(file);
 	return i+1;
 }
 
@@ -192,20 +209,13 @@ int modificar(Legenda *legenda, int tamanho){
 //Retorno: nenhum.
 int cadastro(Legenda *legenda, int tamanho){
 	int i=0;
-	char encerrar;
-	char numeroLegenda[10];
-	char lavaJato;
-
+	char encerrar, numeroLegenda[10], lavaJato;
 	FILE *file = fopen("legenda.bin", "ab+");
 
 	printf("Insira os dados dos canditados: \n");
 
-	if(tamanho>0){
-		i=tamanho+1;
-	}
-	else{
-		i=tamanho;
-	}
+	(tamanho>0)? i=tamanho+1 : i=tamanho;
+	
 	for(i; i<MAX_TAMANHO_LEGENDA; i++){
 		//if your use windows, use sytem("cls");
 		system("clear");
@@ -230,16 +240,18 @@ int cadastro(Legenda *legenda, int tamanho){
 		//fwrite(&legenda[i], sizeof(legenda[i]), 1, file);
 
 		//fprintf(file,"%d\n", i);
-		fprintf(file,"%d\n", legenda[i].candidato.numeroLegenda);
+		fprintf(file,"%d\n", i);
+		fprintf(file,"%d\n",legenda[i].candidato.numeroLegenda);
 		fprintf(file,"%s\n", legenda[i].candidato.nome);
-		fprintf(file,"%s\n", legenda[i].sigla);
-		fprintf(file,"%c\n", legenda[i].candidato.lavaJato);
+		fprintf(file,"%s\n",legenda[i].sigla, legenda[i].candidato.lavaJato);
+		fprintf(file,"%d\n", i, legenda[i].candidato.numeroLegenda, legenda[i].candidato.nome, legenda[i].sigla, legenda[i].candidato.lavaJato);
 
 		printf("Encerrar (S-sim)");
 		encerrar = getchar();
 		if(encerrar=='S' || encerrar=='s')
 			break;
 	}
+	
 	fclose(file);
 	if(tamanho==0)
 		++i;
