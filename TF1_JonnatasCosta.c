@@ -114,7 +114,6 @@ int main(void)
 int inicializarLegenda(Legenda *legenda){
 	int c;
 	int i;
-	int vazio=0;
 
 	FILE *file;
 	if(!(file=fopen("legenda.bin", "r+"))){
@@ -137,11 +136,9 @@ int inicializarLegenda(Legenda *legenda){
 		fgets(legenda[i].sigla , MAX_TAMANHO_LEGENDA, file);
 		legenda[i].sigla[strlen(legenda[i].sigla)-1]='\0';
 		fscanf(file,"%c\n", &legenda[i].candidato.lavaJato);	
-		vazio++;
-		printf("VAZIO %%%%%%%%%%%% %d", vazio);
 	}
 	fclose(file);
-	return (vazio>1)?i+1:0;
+	return (strlen(legenda[i].candidato.nome)==0)? 0 :i+1;
 }
 
 //Objetivo: Modificar dados de uma legenda  
