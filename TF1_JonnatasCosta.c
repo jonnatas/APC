@@ -113,11 +113,10 @@ int main(void)
 //Retorno: Total de itens lidos no arquivo.
 int inicializarLegenda(Legenda *legenda){
 	int c;
-	int i;
+	int i=0;
 
 	FILE *file;
-	if(!(file=fopen("legenda.bin", "r+"))){
-		file=fopen("legenda.bin", "w+");
+	if(file=fopen("legenda.bin", "a+")){
 		fclose(file);
 		return 0;
 	}
@@ -126,7 +125,7 @@ int inicializarLegenda(Legenda *legenda){
 		fclose(file);
 		return 0;
 	}
-	
+	/*
 	rewind(file);
 	while(!feof(file)){
 		fscanf(file,"%d\n", &i);
@@ -136,9 +135,10 @@ int inicializarLegenda(Legenda *legenda){
 		fgets(legenda[i].sigla , MAX_TAMANHO_LEGENDA, file);
 		legenda[i].sigla[strlen(legenda[i].sigla)-1]='\0';
 		fscanf(file,"%c\n", &legenda[i].candidato.lavaJato);	
-	}
+	}*/
 	fclose(file);
 	return (strlen(legenda[i].candidato.nome)==0)? 0 :i+1;
+	
 }
 
 //Objetivo: Modificar dados de uma legenda  
