@@ -66,7 +66,7 @@ int main(void)
 		
 	memset(numero_repeticoes, 0, 100);
 	do{
-		printf("\tOpções\n");
+		printf( ANSI_COLOR_MAGENTA " Menu de opções\n" ANSI_COLOR_RESET);
 		printf("\n 1. Cadastrar novo candidato");
 		printf("\n 2. Modificar dados do candidato");
 		printf("\n 3. Listar todos os candidatos cadastrados");
@@ -92,7 +92,7 @@ int main(void)
 			case 4:
 				system("clear");
 				exibirLegendalavaJato(legenda, tamanho);
-
+				break;
 			case 5:
 				system("clear");
 				apagarArquivo();
@@ -161,10 +161,9 @@ int apagarArquivo(){
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
 int modificar(Legenda *legenda, int tamanho){
-	int i;
-	int numeroLegenda;
 	char lavaJato;
-	int cancelar;
+	int i, numeroLegenda, cancelar, continuarAlterando, opcaoModificar;
+
 	getchar();
 	printf("Cancelar e voltar? (Digite S): ");
 
@@ -174,25 +173,46 @@ int modificar(Legenda *legenda, int tamanho){
 	printf("Insira o numero da legenda do candidato: ");
 	scanf("%d", &numeroLegenda);
 	getchar();
+
 	for(i=0; i<=tamanho; i++){
 		if(legenda[i].candidato.numeroLegenda == numeroLegenda){
 			//if your use windows, use sytem("cls");
 			system("clear");
-			printf("\tInsira os dados: \n");
-			printf("\tCandidato %d\n", i+1);
-
-			printf("\tNome atual ( %s ), inserir novo: ", legenda[i].candidato.nome);
-			fgets(legenda[i].candidato.nome, MAXTAMANHONOME, stdin);
-			validarNome(legenda, i);
-
-			printf("\tSigla atual ( %s ), inserir nova: ", legenda[i].sigla);
-			fgets(legenda[i].sigla, MAXPARTIDO, stdin);
-			validarSigla(legenda, i);
-
-			printf("\tSituação na lavaJato (%c), inserir nova: ", legenda[i].candidato.lavaJato);
-			lavaJato=getchar();
-			legenda[i].candidato.lavaJato = validarSituacao(lavaJato);
 			
+			printf( ANSI_COLOR_MAGENTA "\n Candidato %d\n" ANSI_COLOR_RESET, i+1);
+			printf("\n Qual dado deseja alterar?\n");
+			printf("\n [1] - Nome atual ( %s ), inserir novo", legenda[i].candidato.nome);
+			printf("\n [2] - Sigla atual ( %s ), inserir nova", legenda[i].sigla);
+			printf("\n [3] - Situação na lavaJato (%c), inserir nova\n", legenda[i].candidato.lavaJato);
+			
+			scanf("%d", &opcaoModificar);
+			getchar();
+
+			switch(opcaoModificar){
+				case 1:
+					printf("\nInserir novo nome: ", legenda[i].candidato.nome);
+					fgets(legenda[i].candidato.nome, MAXTAMANHONOME, stdin);
+					validarNome(legenda, i);
+					break;
+				case 2:
+					printf("\nInserir nova sigla: ", legenda[i].sigla);
+					printf("\tSigla atual ( %s ), inserir nova: ", legenda[i].sigla);
+					fgets(legenda[i].sigla, MAXPARTIDO, stdin);
+					validarSigla(legenda, i);
+					break;
+				case 3:
+					printf("\tO candidato esta relacionado com a lavajato? (S-sim, N-não) : ", legenda[i].candidato.lavaJato);
+					lavaJato=getchar();
+					legenda[i].candidato.lavaJato = validarSituacao(lavaJato);
+					break;
+				default:
+					printf("ERROR. Valor incorreto, digite novamente");
+					printf(" Candidato %d\n", i+1);
+					printf(" Qual dado deseja alterar?\n");
+					printf("\t [1] - Nome atual ( %s ), inserir novo", legenda[i].candidato.nome);
+					printf("\t [2] - Sigla atual ( %s ), inserir nova", legenda[i].sigla);
+					printf("\t [3] - Situação na lavaJato (%c), inserir nova\n", legenda[i].candidato.lavaJato);
+			}
 			return 1;
 		}
 	}
@@ -231,7 +251,7 @@ int cadastro(Legenda *legenda, int tamanho){
 		fgets(legenda[i].sigla, MAXPARTIDO, stdin);
 		validarSigla(legenda, i);
 
-		printf("\tSituação na lavaJato: ");
+		printf("\tSituação na lavaJato (S-sim, N-Não): ");
 		lavaJato=getchar();
 		legenda[i].candidato.lavaJato = validarSituacao(lavaJato);
 
@@ -259,20 +279,24 @@ int cadastro(Legenda *legenda, int tamanho){
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
 int exibirLegendalavaJato(Legenda *legenda, int tamanho){
-	int i;	
+	int i;
 	if(strlen(legenda[0].candidato.nome)==0){
 		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
 		return 0;
 	}
+	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
+	
 	for(i=0; i<tamanho; i++){
-		if(legenda[i].candidato.lavaJato == 'S'){
-			printf("Candidato %d\n", i+1);
-			printf("\tNunero: %d\n",legenda[i].candidato.numeroLegenda);
-			printf("\tNome: %s\n", legenda[i].candidato.nome);
-			printf("\tSigla: %s\n", legenda[i].sigla);
-			printf("\tlava Jato: %c\n", legenda[i].candidato.lavaJato);
+		if(legenda[i].candidato.lavaJato=='S')
+		{
+			printf("%d", i);
+			printf("\t\t%d",legenda[i].candidato.numeroLegenda);
+			printf("\t\t%s", legenda[i].candidato.nome);
+			printf("\t\t%s", legenda[i].sigla);
+			printf("\t\tLava Jato\n");
 		}
 	}
+
 	return 1;
 }
 
