@@ -258,9 +258,6 @@ int cadastro(Legenda *legenda, int tamanho){
 		lavaJato=getchar();
 		legenda[i].candidato.lavaJato = validarSituacao(lavaJato);
 
-		//fwrite(&legenda[i], sizeof(legenda[i]), 1, file);
-
-		//fprintf(file,"%d\n", i);
 		fprintf(file,"%d\n", i);
 		fprintf(file,"%d\n",legenda[i].candidato.numeroLegenda);
 		fprintf(file,"%s\n", legenda[i].candidato.nome);
@@ -280,7 +277,7 @@ int cadastro(Legenda *legenda, int tamanho){
 
 //Objetivo: Exibir candidatos com problemas na Lava Jato 
 //Entrada: legenda e posicao da legenda.
-//Retorno: nenhum.
+//Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
 int exibirLegendalavaJato(Legenda *legenda, int tamanho){
 	int i;
 	if(strlen(legenda[0].candidato.nome)==0){
@@ -300,13 +297,13 @@ int exibirLegendalavaJato(Legenda *legenda, int tamanho){
 		}
 	}
 
-	return 1;
+	return i;
 }
 
 
 //Objetivo: Exibir todas as legendas  
 //Entrada: legenda e posicao da legenda.
-//Retorno: nenhum.
+//Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
 int exibirLegenda(Legenda *legenda, int tamanho){
 	int i;
 	if(strlen(legenda[0].candidato.nome)==0){
@@ -326,18 +323,19 @@ int exibirLegenda(Legenda *legenda, int tamanho){
 			printf("\t\tFicha Limpa", legenda[i].candidato.lavaJato);
 		printf("\n");
 	}
-	return 1;
+	return i;
 }
 
 //Objetivo: Validar o nome do usuário 
 //Entrada: legenda e posicao da legenda.
 //Retorno: nenhum.
 void validarNome(Legenda *legenda, int posicao){
-	legenda[posicao].candidato.nome[strlen(legenda[posicao].candidato.nome) -1] = '\0' ;
+	removerPulaLinha(legenda[posicao].candidato.nome);
+	
 	while(strlen(legenda[posicao].candidato.nome)<=0  || legenda[posicao].candidato.nome[0]=='\n' || legenda[posicao].candidato.nome[0]==' '){
-		printf(ANSI_COLOR_RED "\n\tError. Nome Vazio, insira novamente: \n" ANSI_COLOR_RESET );
+		printf(ANSI_COLOR_RED "\tError. Nome Vazio, insira novamente: " ANSI_COLOR_RESET );
 		fgets(legenda[posicao].candidato.nome, MAXTAMANHONOME, stdin);
-		legenda[posicao].candidato.nome[strlen(legenda[posicao].candidato.nome) -1] = '\0' ;
+		removerPulaLinha(legenda[posicao].candidato.nome);
 	}
 }
 
@@ -347,7 +345,7 @@ void validarNome(Legenda *legenda, int posicao){
 void verificarSiglaVazio(Legenda *legenda, int posicao){
 	removerPulaLinha(legenda[posicao].sigla);
 	while(strlen(legenda[posicao].sigla)<=0  || legenda[posicao].sigla[0]=='\n' || legenda[posicao].sigla[0]==' '){
-		printf(ANSI_COLOR_RED "\n\tError. Sigla Vazio, insira novamente: \n" ANSI_COLOR_RESET );
+		printf(ANSI_COLOR_RED "\tError. Sigla Vazio, insira novamente: " ANSI_COLOR_RESET );
 		fgets(legenda[posicao].sigla, MAXPARTIDO, stdin);
 		removerPulaLinha(legenda[posicao].sigla);
 	}
@@ -363,7 +361,7 @@ void validarSigla(Legenda *legenda, int posicao){
 		for(i=0; i<posicao; i++){
 			while(strcmp(legenda[posicao].sigla,legenda[i].sigla)==0){
 				i=0;
-				printf(ANSI_COLOR_RED "\n\tError valor existente insira novamente: \n" ANSI_COLOR_RESET );
+				printf(ANSI_COLOR_RED "\tError valor existente insira novamente: " ANSI_COLOR_RESET );
 				fgets(legenda[posicao].sigla, MAXPARTIDO, stdin);
 				verificarSiglaVazio(legenda, posicao);
 			}
@@ -386,7 +384,7 @@ int validarSituacao(int lavaJato){
 	
 	while((lavaJato != 'S' && lavaJato != 'N')){
 		int i;
-		printf(ANSI_COLOR_RED "\n\tError, valor incorreto, insira (S-Sim ou N-Não): \n" ANSI_COLOR_RESET );
+		printf(ANSI_COLOR_RED "\tError, valor incorreto, insira (S-Sim ou N-Não): " ANSI_COLOR_RESET );
 		lavaJato = getchar();
 	}
 	getchar();
@@ -401,7 +399,7 @@ void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao){
 	int numeroLegendaConvertido = atoi(numeroLegenda);
 
 	while(numeroLegendaConvertido<10 || numeroLegendaConvertido>100 || numero_repeticoes[numeroLegendaConvertido]){
-		printf(ANSI_COLOR_RED "\n\tError. Valor errado. insira novamente: " ANSI_COLOR_RESET );
+		printf(ANSI_COLOR_RED "\tError. Valor errado. insira novamente: " ANSI_COLOR_RESET );
 		fgets(numeroLegenda, 10, stdin);
 		numeroLegendaConvertido = atoi(numeroLegenda);
 	}
