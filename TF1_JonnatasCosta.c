@@ -116,7 +116,9 @@ int inicializarLegenda(Legenda *legenda){
 	int i=0;
 
 	FILE *file;
-	if(file=fopen("legenda.bin", "a+")){
+
+	if(!(file=fopen("legenda.bin","r+"))){
+		file=fopen("legenda.bin","w+");
 		fclose(file);
 		return 0;
 	}
@@ -125,7 +127,7 @@ int inicializarLegenda(Legenda *legenda){
 		fclose(file);
 		return 0;
 	}
-	/*
+	
 	rewind(file);
 	while(!feof(file)){
 		fscanf(file,"%d\n", &i);
@@ -134,8 +136,9 @@ int inicializarLegenda(Legenda *legenda){
 		legenda[i].candidato.nome[strlen(legenda[i].candidato.nome)-1]='\0';
 		fgets(legenda[i].sigla , MAX_TAMANHO_LEGENDA, file);
 		legenda[i].sigla[strlen(legenda[i].sigla)-1]='\0';
-		fscanf(file,"%c\n", &legenda[i].candidato.lavaJato);	
-	}*/
+		fscanf(file,"%d\n", &legenda[i].candidato.lavaJato);	
+	}
+	
 	fclose(file);
 	return (strlen(legenda[i].candidato.nome)==0)? 0 :i+1;
 	
@@ -261,8 +264,8 @@ int cadastro(Legenda *legenda, int tamanho){
 		fprintf(file,"%d\n", i);
 		fprintf(file,"%d\n",legenda[i].candidato.numeroLegenda);
 		fprintf(file,"%s\n", legenda[i].candidato.nome);
-		fprintf(file,"%s\n",legenda[i].sigla, legenda[i].candidato.lavaJato);
-		fprintf(file,"%d\n", i, legenda[i].candidato.numeroLegenda, legenda[i].candidato.nome, legenda[i].sigla, legenda[i].candidato.lavaJato);
+		fprintf(file,"%s\n",legenda[i].sigla);
+		fprintf(file,"%d\n", legenda[i].candidato.lavaJato);
 
 		printf("Encerrar (S-sim)");
 		encerrar = getchar();
