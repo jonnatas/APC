@@ -156,11 +156,14 @@ int apagarArquivo(){
 	char nomeArquivo[tamanhoArquivo];
 
 	getchar();
-	printf(ANSI_COLOR_GREEN "\tCancelar e voltar ao menu?" ANSI_COLOR_RED " (Digite S-sim e qualquer outra tecla Nao): " ANSI_COLOR_RESET);
+	printf(ANSI_COLOR_GREEN "\tCancelar e voltar ao menu?" ANSI_COLOR_RED " (Digite S-sim ou qualquer outra tecla em caso negativo): " ANSI_COLOR_RESET);
 
 	cancelar = getchar();
-	if(cancelar=='S' || cancelar=='s')
+	if(cancelar=='S' || cancelar=='s'){
+		printf( ANSI_COLOR_YELLOW " OPERACAO CANCELADA!!, digite qualquer tecla para continuar " ANSI_COLOR_RESET);
+ 		getchar();
 		return 1;
+	}
 
 	printf("\tDigite o nome do arquivo: " ANSI_COLOR_RED " (Ou digite S, para cancelar): " ANSI_COLOR_RESET);
 	fgets(nomeArquivo, tamanhoArquivo, stdin);
@@ -169,12 +172,29 @@ int apagarArquivo(){
 	if((nomeArquivo[0]=='S') || (nomeArquivo[0]=='s'))
 		return 1;
 	if(strcmp(nomeArquivo,"legenda.bin")!=0){
-		printf(ANSI_COLOR_RED " Arquivo inexistente, digite qualquer tecla para voltar ao meu " ANSI_COLOR_RESET);
+		printf(ANSI_COLOR_RED " Arquivo inexistente, digite qualquer tecla para voltar ao menu " ANSI_COLOR_RESET);
+		getchar();
 		return 1;
 	}else{
-		printf(ANSI_COLOR_GREEN " Arquivo Removido com sucesso, digite qualquer tecla para voltar ao meu " ANSI_COLOR_RESET);
-		remove(nomeArquivo);
-		getchar();
+
+		printf(ANSI_COLOR_GREEN "\tConfirmar a exclusão de todos os dados?" ANSI_COLOR_RED " (Digite S-sim ou ou N-Não): " ANSI_COLOR_RESET);
+		cancelar = getchar();
+		while(toupper(cancelar)!='S' && toupper(cancelar)!='N'){
+			printf( ANSI_COLOR_RED " Error, valor invalido digite S-Sim ou N-Não " ANSI_COLOR_RESET);
+			cancelar = getchar();
+		}
+		if(toupper(cancelar)=='S'){
+			printf(ANSI_COLOR_GREEN " Arquivo Removido com sucesso, digite qualquer tecla para voltar ao meu " ANSI_COLOR_RESET);
+			remove(nomeArquivo);
+			getchar();
+			FILE *file = fopen("legenda.bin","w+");
+			fclose(file);
+		}else{
+			printf( ANSI_COLOR_YELLOW " OPERACAO CANCELADA!!, digite qualquer tecla para continuar " ANSI_COLOR_RESET);	
+			getchar();
+			return 1;		
+		}
+		
 		return 0;
 	}
 }
