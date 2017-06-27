@@ -52,6 +52,7 @@ void removerPulaLinha(char *palavra);
 Legenda* ordenarLegendaD (Legenda *legenda, int tamanho);
 Legenda* ordenarLegendaC (Legenda *legenda, int tamanho);
 void imprimirLegenda(Legenda *legenda, int tamanho);
+char *tornaMaisculo(char *texto);
 
 //Variavel global para setar as repetições e evitar um laço para verificar as mesmas o(n) na busca
 int numero_repeticoes[100];
@@ -316,7 +317,7 @@ void imprimirLegenda(Legenda *legenda, int tamanho){
 	}
 }
 
-Legenda* ordenarLegendaD (Legenda *velhaLegenda, int tamanho){
+Legenda* ordenarLegendaC (Legenda *velhaLegenda, int tamanho){
 	int i, j, min, aux;
 	Legenda trocaLegenda, *legenda;
 	legenda = velhaLegenda;
@@ -324,11 +325,11 @@ Legenda* ordenarLegendaD (Legenda *velhaLegenda, int tamanho){
 	for(i=0; i<(tamanho-1); i++){
 		min = i;
 		for(j=(i+1); j<tamanho; j++){
-			if(strcmp(legenda[j].candidato.nome, legenda[min].candidato.nome)<1){
+			if(strcmp(tornaMaisculo(legenda[j].candidato.nome), tornaMaisculo(legenda[min].candidato.nome))<1){
 				min = j;
 			}
 		}
-		if(0!=(strcmp(legenda[i].candidato.nome, legenda[min].candidato.nome))){
+		if(0!=(strcmp(tornaMaisculo(legenda[i].candidato.nome), tornaMaisculo(legenda[min].candidato.nome)))){
 			trocaLegenda = legenda[i];
 			legenda[i] = legenda[min];
 			legenda[min] = trocaLegenda;
@@ -340,24 +341,24 @@ Legenda* ordenarLegendaD (Legenda *velhaLegenda, int tamanho){
 char *tornaMaisculo(char *texto){
 	int i;
 	for(i=0; i<strlen(texto); i++){
-		toupper(texto[i]);
+		texto[i] = toupper(texto[i]);
 	}
 	return texto;
 }
 
-Legenda* ordenarLegendaC (Legenda *velhaLegenda, int tamanho){
+Legenda* ordenarLegendaD (Legenda *velhaLegenda, int tamanho){
 	int i, j, min, aux;
 	Legenda trocaLegenda, *legenda;
 	legenda = velhaLegenda;
 
-	for(i=0; i<=(tamanho); i++){
+	for(i=0; i<(tamanho-1); i++){
 		min = i;
 		for(j=(i+1); j<tamanho; j++){
-			if(strcmp(legenda[j].candidato.nome, legenda[min].candidato.nome)>1){
+			if(strcmp(tornaMaisculo(legenda[j].candidato.nome), tornaMaisculo(legenda[min].candidato.nome))>1){
 				min = j;
 			}
 		}
-		if(0!=(strcmp(legenda[i].candidato.nome, legenda[min].candidato.nome))){
+		if(0!=(strcmp(tornaMaisculo(legenda[i].candidato.nome), tornaMaisculo(legenda[min].candidato.nome)))){
 			trocaLegenda = legenda[i];
 			legenda[i] = legenda[min];
 			legenda[min] = trocaLegenda;
