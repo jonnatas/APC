@@ -6,14 +6,14 @@ Objetivo: Cadastrar os canditados para uma possivel eleição.
 Entrada: Nome, numero da legenda, sigla do partido.
 Saida: candidatos cadastrados.
 */
-#include<stdio.h>
-#include<stdlib.h>
-#include<string.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <locale.h>
 #include <regex.h>
 
-#define MAXPARTIDO 10
-#define MAXTAMANHONOME 50
+#define MAXPARTIDO 100
+#define MAXTAMANHONOME 200
 #define MAX_TAMANHO_LEGENDA 90
 
 #define ANSI_COLOR_RED     "\x1b[31m"
@@ -58,8 +58,7 @@ int main(void)
 	setlocale(LC_ALL, "Portuguese");
 	// Declaracoes
 	Legenda legenda[MAX_TAMANHO_LEGENDA];
-	int tamanho, listar,numeroLegenda;
-	int opcao;
+	int tamanho, listar, numeroLegenda, opcao;
 	// Algoritimo
 
 	(inicializarLegenda(legenda)>0) ? tamanho=inicializarLegenda(legenda) : tamanho=0;
@@ -101,7 +100,7 @@ int main(void)
 				break;
 			default:
 				system("clear");
-				printf(ANSI_COLOR_RED "\n\tError valor invalido, insira novamente \n" ANSI_COLOR_RESET );
+				printf(ANSI_COLOR_RED "\tError valor invalido, insira novamente: " ANSI_COLOR_RESET );
 				break;
 		}
 	}while(opcao!=0);
@@ -140,25 +139,39 @@ int inicializarLegenda(Legenda *legenda){
 	}
 	
 	fclose(file);
-	return (strlen(legenda[i].candidato.nome)==0)? 0 :i+1;
-	
+	return (strlen(legenda[i].candidato.nome)==0) ? 0 : i+1;
 }
 
 //Objetivo: Modificar dados de uma legenda  
 //Entrada: legenda e posicao da legenda.
-//Retorno: nenhum.
+//Retorno: Zero caso a exclusão bem sucedida, 1 caso contrário.
 int apagarArquivo(){
-	FILE *file;
-        file = fopen("legenda.bin", "w");
-	if(file	== NULL){
-		printf(ANSI_COLOR_RED "\n\tError ao apagar o arquivo!!!\n" ANSI_COLOR_RESET );
+	int cancelar;
+	int tamanhoArquivo = 100;
+	char nomeArquivo[tamanhoArquivo];
+
+	getchar();
+	printf(ANSI_COLOR_GREEN "\tCancelar e voltar ao menu?" ANSI_COLOR_RED " (Digite S-sim e qualquer outra tecla Nao): " ANSI_COLOR_RESET);
+
+	cancelar = getchar();
+	if(cancelar=='S' || cancelar=='s')
 		return 1;
+
+	printf("\tDigite o nome do arquivo: " ANSI_COLOR_RED " (Ou digite S, para cancelar): " ANSI_COLOR_RESET);
+	fgets(nomeArquivo, tamanhoArquivo, stdin);
+	removerPulaLinha(nomeArquivo);
+
+	if((nomeArquivo[0]=='S') || (nomeArquivo[0]=='s'))
+		return 1;
+	if(strcmp(nomeArquivo,"legenda.bin")!=0){
+		printf(ANSI_COLOR_RED " Arquivo inexistente, digite qualquer tecla para voltar ao meu " ANSI_COLOR_RESET);
+		return 1;
+	}else{
+		printf(ANSI_COLOR_GREEN " Arquivo Removido com sucesso, digite qualquer tecla para voltar ao meu " ANSI_COLOR_RESET);
+		remove(nomeArquivo);
+		getchar();
+		return 0;
 	}
-	else{
-		printf("\nArquivo apagado com sucesso, um novo arquivo foi criado!!!\n\n");
-	}
-	fclose(file);
-	return 0;
 }
 //Objetivo: Modificar dados de uma legenda  
 //Entrada: legenda e posicao da legenda.
@@ -168,7 +181,7 @@ int modificar(Legenda *legenda, int tamanho){
 	int i, numeroLegenda, cancelar, continuarAlterando, opcaoModificar;
 
 	getchar();
-	printf("Cancelar e voltar? (Digite S): ");
+	printf(ANSI_COLOR_GREEN "Cancelar e voltar?" ANSI_COLOR_RED " (Digite S): " ANSI_COLOR_RESET);
 
 	cancelar = getchar();
 	if(cancelar=='S' || cancelar=='s')
@@ -228,10 +241,17 @@ int modificar(Legenda *legenda, int tamanho){
 //Entrada: legenda e posicao da legenda.
 //Retorno: Total de itens exibidos, 0 caso falhe.
 int cadastro(Legenda *legenda, int tamanho){
-	int i;
+	int i, cancelar;
 	char encerrar, numeroLegenda[10], lavaJato;
-	FILE *file = fopen("legenda.bin", "ab+");
-	
+	FILE *file;
+
+	printf(ANSI_COLOR_GREEN "\tCancelar e voltar?" ANSI_COLOR_RED " (Digite S): " ANSI_COLOR_RESET);
+
+	cancelar = getchar();
+	if(cancelar=='S' || cancelar=='s')
+		return 0;
+
+	file = fopen("legenda.bin", "ab+");
 	if(file	== NULL){
 		printf(ANSI_COLOR_RED "\n\tError ao apagar o arquivo!!!\n" ANSI_COLOR_RESET );
 		return 0;
@@ -240,7 +260,7 @@ int cadastro(Legenda *legenda, int tamanho){
 	for(i=tamanho; i<MAX_TAMANHO_LEGENDA; i++){
 		//if your use windows, use sytem("cls");
 		system("clear");
-		printf("\tCandidato %d\n", i+1);
+		printf(ANSI_COLOR_YELLOW "\tCandidato %d\n" ANSI_COLOR_RESET, i+1);
 
 		printf("\tNúmero: ");
 		fgets(numeroLegenda, 10, stdin);
@@ -275,32 +295,6 @@ int cadastro(Legenda *legenda, int tamanho){
 	return i;
 }
 
-//Objetivo: Exibir candidatos com problemas na Lava Jato 
-//Entrada: legenda e posicao da legenda.
-//Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
-int exibirLegendalavaJato(Legenda *legenda, int tamanho){
-	int i;
-	if(strlen(legenda[0].candidato.nome)==0){
-		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
-		return 0;
-	}
-	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
-	
-	for(i=0; i<tamanho; i++){
-		if(legenda[i].candidato.lavaJato=='S')
-		{
-			printf("%d", i);
-			printf("\t\t%d",legenda[i].candidato.numeroLegenda);
-			printf("\t\t%s", legenda[i].candidato.nome);
-			printf("\t\t%s", legenda[i].sigla);
-			printf("\t\tLava Jato\n");
-		}
-	}
-
-	return i;
-}
-
-
 //Objetivo: Exibir todas as legendas  
 //Entrada: legenda e posicao da legenda.
 //Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
@@ -323,6 +317,31 @@ int exibirLegenda(Legenda *legenda, int tamanho){
 			printf("\t\tFicha Limpa", legenda[i].candidato.lavaJato);
 		printf("\n");
 	}
+	return i;
+}
+
+//Objetivo: Exibir candidatos com problemas na Lava Jato 
+//Entrada: legenda e posicao da legenda.
+//Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
+int exibirLegendalavaJato(Legenda *legenda, int tamanho){
+	int i;
+	if(strlen(legenda[0].candidato.nome)==0){
+		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
+		return 0;
+	}
+	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
+	
+	for(i=0; i<tamanho; i++){
+		if(legenda[i].candidato.lavaJato=='S')
+		{
+			printf("%d", i);
+			printf("\t\t%d",legenda[i].candidato.numeroLegenda);
+			printf("\t\t%s", legenda[i].candidato.nome);
+			printf("\t\t%s", legenda[i].sigla);
+			printf("\t\tLava Jato\n");
+		}
+	}
+
 	return i;
 }
 
