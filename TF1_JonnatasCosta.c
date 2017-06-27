@@ -40,7 +40,7 @@ int modificar(Legenda *legenda, int tamanho);
 int cadastro(Legenda *legenda, int tamanho);
 int exibirLegenda(Legenda *legenda, int tamanho);
 int exibirLegendalavaJato(Legenda *legenda, int tamanho);
-void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao);
+void validarNumero(char *numeroLegenda, Legenda *legenda, int posicao);
 void validarNome(Legenda *legenda, int posicao);
 void validarSigla(Legenda *legenda, int posicao);
 void verificarSiglaVazio(Legenda *legenda, int posicao);
@@ -54,10 +54,6 @@ Legenda* ordenarLegendaC (Legenda *legenda, int tamanho);
 void imprimirLegenda(Legenda *legenda, int tamanho);
 char *tornaMaisculo(char *texto);
 
-//Variavel global para setar as repetições e evitar um laço para verificar as mesmas o(n) na busca
-int numero_repeticoes[100];
-
-
 int main(void)
 {
 	setlocale(LC_ALL, "Portuguese");
@@ -68,7 +64,6 @@ int main(void)
 
 	(inicializarLegenda(legenda)>0) ? tamanho=inicializarLegenda(legenda) : tamanho=0;
 		
-	memset(numero_repeticoes, 0, 100);
 	do{
 		printf( ANSI_COLOR_MAGENTA " Menu de opções\n" ANSI_COLOR_RESET);
 		printf("\n 1. Cadastrar novo candidato");
@@ -489,7 +484,7 @@ void validarSigla(Legenda *legenda, int posicao){
 //Objetivo: validar numero da legenda
 //Entrada: numero da legenda
 //Retorno: sem retorno
-void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao){
+void validarNumero(char *numeroLegenda, Legenda *legenda, int posicao){
 	int i;
 	int numeroLegendaConvertido = atoi(numeroLegenda);
 	for(i=0; i<posicao; i++){
@@ -504,7 +499,6 @@ void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao){
 			}
 		}
 	}
-	++numero_repeticoes[numeroLegendaConvertido];
 	legenda[posicao].candidato.numeroLegenda = numeroLegendaConvertido;
 }
 
