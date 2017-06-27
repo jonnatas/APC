@@ -53,6 +53,7 @@ Legenda* ordenarLegendaD (Legenda *legenda, int tamanho);
 Legenda* ordenarLegendaC (Legenda *legenda, int tamanho);
 void imprimirLegenda(Legenda *legenda, int tamanho);
 char *tornaMaisculo(char *texto);
+void validarNumeroLegenda(char *numeroLegenda);
 
 int main(void)
 {
@@ -108,7 +109,7 @@ int main(void)
 }
 
 //Objetivo: Inicializar a struct com os dados salvos no arquivo
-//Entrada: Ponteiro para o arquivo e a legenda.
+//Entrada: Ponteiro para a legenda.
 //Retorno: Total de itens lidos no arquivo.
 int inicializarLegenda(Legenda *legenda){
 	int c;
@@ -142,9 +143,9 @@ int inicializarLegenda(Legenda *legenda){
 	return (strlen(legenda[i].candidato.nome)==0) ? 0 : i+1;
 }
 
-//Objetivo: Modificar dados de uma legenda  
-//Entrada: legenda e posicao da legenda.
-//Retorno: Zero caso a exclusão bem sucedida, 1 caso contrário.
+//Objetivo: Apagar dados de uma legenda  
+//Entrada: Nenhuma
+//Retorno: Um caso a exclusão bem sucedida, Zero caso contrário.
 int apagarArquivo(){
 	int cancelar;
 	int tamanhoArquivo = 100;
@@ -193,25 +194,36 @@ int apagarArquivo(){
 		return 0;
 	}
 }
+
+//Objetivo: Validar existencia de uma legenda  
+//Entrada: legenda e posicao da legenda.
+//Retorno: Um em caso de sucesso, Zero em caso de falha.
+void validarNumeroLegenda(char *numeroLegenda){
+	while(numeroLegenda[0]=='\0' || numeroLegenda[0]=='\n'){
+		printf(ANSI_COLOR_RED "Erro valor invalido" ANSI_COLOR_RED ", insira novamente: " ANSI_COLOR_RESET);
+		fgets(numeroLegenda, 10, stdin);
+	}
+}
 //Objetivo: Modificar dados de uma legenda  
 //Entrada: legenda e posicao da legenda.
-//Retorno: nenhum.
+//Retorno: Um em caso de sucesso, Zero em caso de falha.
 int modificar(Legenda *legenda, int tamanho){
-	char lavaJato;
-	int i, numeroLegenda, cancelar, continuarAlterando, opcaoModificar;
+	char lavaJato, numeroLegenda[10];
+	int i, cancelar, continuarAlterando, opcaoModificar;
 
 	getchar();
-	printf(ANSI_COLOR_GREEN "Cancelar e voltar?" ANSI_COLOR_RED " (Digite S): " ANSI_COLOR_RESET);
+	printf(ANSI_COLOR_GREEN "Cancelar e voltar?" ANSI_COLOR_RED " (Digite S-sim, outra tecla Não): " ANSI_COLOR_RESET);
 
 	cancelar = getchar();
 	if(cancelar=='S' || cancelar=='s')
 		return 0;
+	
 	printf("Insira o numero da legenda do candidato: ");
-	scanf("%d", &numeroLegenda);
-	getchar();
+	fgets(numeroLegenda, 10, stdin);
+	validarNumeroLegenda(numeroLegenda);
 
 	for(i=0; i<=tamanho; i++){
-		if(legenda[i].candidato.numeroLegenda == numeroLegenda){
+		if(legenda[i].candidato.numeroLegenda == atoi(numeroLegenda)){
 			//if your use windows, use sytem("cls");
 			system("clear");
 			
@@ -252,10 +264,9 @@ int modificar(Legenda *legenda, int tamanho){
 			return 1;
 		}
 	}
-	printf("\tNão encontrou-se a legenda %d ",numeroLegenda);
+	printf(ANSI_COLOR_YELLOW "Sinto muito, não encontramos a sua legenda" ANSI_COLOR_RESET);
 	return 0;
 }
-
 
 //Objetivo: Cadastrar todas as legendas  
 //Entrada: legenda e posicao da legenda.
@@ -314,6 +325,10 @@ int cadastro(Legenda *legenda, int tamanho){
 	fclose(file);
 	return i;
 }
+
+//Objetivo: Imprimir os dados da legenda na tela  
+//Entrada: legenda e posicao da legenda.
+//Retorno: Nenhum.
 void imprimirLegenda(Legenda *legenda, int tamanho){
 	int i;
 
@@ -332,6 +347,9 @@ void imprimirLegenda(Legenda *legenda, int tamanho){
 	}
 }
 
+//Objetivo: Ordenar as legendas de modo crescente
+//Entrada: legenda e posicao da legenda.
+//Retorno: legenda ordenada.
 Legenda* ordenarLegendaC (Legenda *velhaLegenda, int tamanho){
 	int i, j, min, aux;
 	Legenda trocaLegenda, *legenda;
@@ -353,6 +371,9 @@ Legenda* ordenarLegendaC (Legenda *velhaLegenda, int tamanho){
 	return legenda;
 }
 
+//Objetivo: Transformar texto em maisculo
+//Entrada: Texto.
+//Retorno: Texto em maisculo.
 char *tornaMaisculo(char *texto){
 	int i;
 	for(i=0; i<strlen(texto); i++){
@@ -361,6 +382,9 @@ char *tornaMaisculo(char *texto){
 	return texto;
 }
 
+//Objetivo: Ordenar as legendas de modo decrescente
+//Entrada: legenda e posicao da legenda.
+//Retorno: legenda ordenada.
 Legenda* ordenarLegendaD (Legenda *velhaLegenda, int tamanho){
 	int i, j, min, aux;
 	Legenda trocaLegenda, *legenda;
@@ -488,8 +512,8 @@ void validarNumero(char *numeroLegenda, Legenda *legenda, int posicao){
 	int i;
 	int numeroLegendaConvertido = atoi(numeroLegenda);
 	for(i=0; i<posicao; i++){
-		while(numeroLegendaConvertido==legenda[i].candidato.numeroLegenda){
-			printf(ANSI_COLOR_RED "\tError. Valor existenre. insira novamente: " ANSI_COLOR_RESET );
+		while(numeroLegendaConvertido==legenda[i].candidato.numeroLegenda || numeroLegenda[0]=='\n' || numeroLegenda[0]=='\0'){
+			printf(ANSI_COLOR_RED "\tError. Valor invalido. insira novamente: " ANSI_COLOR_RESET );
 			fgets(numeroLegenda, 10, stdin);
 			numeroLegendaConvertido = atoi(numeroLegenda);
 			while(numeroLegendaConvertido<10 || numeroLegendaConvertido>100){
