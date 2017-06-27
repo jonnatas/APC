@@ -463,6 +463,28 @@ void validarSigla(Legenda *legenda, int posicao){
 	}
 }
 
+//Objetivo: validar numero da legenda
+//Entrada: numero da legenda
+//Retorno: sem retorno
+void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao){
+	int i;
+	int numeroLegendaConvertido = atoi(numeroLegenda);
+	for(i=0; i<posicao; i++){
+		while(numeroLegendaConvertido==legenda[i].candidato.numeroLegenda){
+			printf(ANSI_COLOR_RED "\tError. Valor existenre. insira novamente: " ANSI_COLOR_RESET );
+			fgets(numeroLegenda, 10, stdin);
+			numeroLegendaConvertido = atoi(numeroLegenda);
+			while(numeroLegendaConvertido<10 || numeroLegendaConvertido>100){
+				printf(ANSI_COLOR_RED "\tError. Valor errado. insira novamente: " ANSI_COLOR_RESET );
+				fgets(numeroLegenda, 10, stdin);
+				numeroLegendaConvertido = atoi(numeroLegenda);
+			}
+		}
+	}
+	++numero_repeticoes[numeroLegendaConvertido];
+	legenda[posicao].candidato.numeroLegenda = numeroLegendaConvertido;
+}
+
 //Objetivo: Remover pula linha
 //Entrada: Uma string qualquer
 //Retorno: String sem pula linha
@@ -483,20 +505,4 @@ int validarSituacao(int lavaJato){
 	}
 	getchar();
 	return lavaJato;
-}
-
-//Objetivo: validar numero da legenda
-//Entrada: numero da legenda
-//Retorno: sem retorno
-void validarNumero(char numeroLegenda[10], Legenda *legenda, int posicao){
-	int i;
-	int numeroLegendaConvertido = atoi(numeroLegenda);
-
-	while(numeroLegendaConvertido<10 || numeroLegendaConvertido>100 || numero_repeticoes[numeroLegendaConvertido]){
-		printf(ANSI_COLOR_RED "\tError. Valor errado. insira novamente: " ANSI_COLOR_RESET );
-		fgets(numeroLegenda, 10, stdin);
-		numeroLegendaConvertido = atoi(numeroLegenda);
-	}
-	++numero_repeticoes[numeroLegendaConvertido];
-	legenda[posicao].candidato.numeroLegenda = numeroLegendaConvertido;
 }
