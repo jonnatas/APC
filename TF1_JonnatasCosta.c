@@ -400,19 +400,22 @@ int exibirLegenda(Legenda *legenda, int tamanho){
 //Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
 int exibirLegendalavaJato(Legenda *legenda, int tamanho){
 	int i;
-	if(strlen(legenda[0].candidato.nome)==0){
+	Legenda *legendaLavaJato = legenda;
+
+	if(strlen(legendaLavaJato[0].candidato.nome)==0){
 		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
 		return 0;
 	}
 	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
 	
+	ordenarLegendaC(legendaLavaJato, tamanho);
 	for(i=0; i<tamanho; i++){
-		if(legenda[i].candidato.lavaJato=='S')
+		if(legendaLavaJato[i].candidato.lavaJato=='S')
 		{
 			printf("%d", i);
-			printf("\t\t%d",legenda[i].candidato.numeroLegenda);
-			printf("\t\t%s", legenda[i].candidato.nome);
-			printf("\t\t%s", legenda[i].sigla);
+			printf("\t\t%d",legendaLavaJato[i].candidato.numeroLegenda);
+			printf("\t\t%s", legendaLavaJato[i].candidato.nome);
+			printf("\t\t%s", legendaLavaJato[i].sigla);
 			printf("\t\tLava Jato\n");
 		}
 	}
