@@ -11,6 +11,7 @@ Saida: candidatos cadastrados.
 #include <string.h>
 #include <locale.h>
 #include <regex.h>
+#include <ctype.h>
 
 #define MAXPARTIDO 100
 #define MAXTAMANHONOME 200
@@ -48,6 +49,9 @@ void zerarNumeros(Legenda *legenda);
 int inicializarLegenda(Legenda *legenda);
 int apagarArquivo();
 void removerPulaLinha(char *palavra);
+Legenda* ordenarLegendaD (Legenda *legenda, int tamanho);
+Legenda* ordenarLegendaC (Legenda *legenda, int tamanho);
+void imprimirLegenda(Legenda *legenda, int tamanho);
 
 //Variavel global para setar as repetições e evitar um laço para verificar as mesmas o(n) na busca
 int numero_repeticoes[100];
@@ -294,16 +298,9 @@ int cadastro(Legenda *legenda, int tamanho){
 	fclose(file);
 	return i;
 }
-
-//Objetivo: Exibir todas as legendas  
-//Entrada: legenda e posicao da legenda.
-//Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
-int exibirLegenda(Legenda *legenda, int tamanho){
+void imprimirLegenda(Legenda *legenda, int tamanho){
 	int i;
-	if(strlen(legenda[0].candidato.nome)==0){
-		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
-		return 0;
-	}
+
 	printf(ANSI_COLOR_YELLOW "Nº\tNúmero da legenda \tNome Completo \tSigla da Legenda \tSituação na lavajato\n" ANSI_COLOR_RESET);
 	
 	for(i=0; i<tamanho; i++){
@@ -317,6 +314,83 @@ int exibirLegenda(Legenda *legenda, int tamanho){
 			printf("\t\tFicha Limpa", legenda[i].candidato.lavaJato);
 		printf("\n");
 	}
+}
+
+Legenda* ordenarLegendaD (Legenda *velhaLegenda, int tamanho){
+	int i, j, min, aux;
+	Legenda trocaLegenda, *legenda;
+	legenda = velhaLegenda;
+
+	for(i=0; i<(tamanho-1); i++){
+		min = i;
+		for(j=(i+1); j<tamanho; j++){
+			if(strcmp(legenda[j].candidato.nome, legenda[min].candidato.nome)<1){
+				min = j;
+			}
+		}
+		if(0!=(strcmp(legenda[i].candidato.nome, legenda[min].candidato.nome))){
+			trocaLegenda = legenda[i];
+			legenda[i] = legenda[min];
+			legenda[min] = trocaLegenda;
+		}
+	}
+	return legenda;
+}
+
+char *tornaMaisculo(char *texto){
+	int i;
+	for(i=0; i<strlen(texto); i++){
+		toupper(texto[i]);
+	}
+	return texto;
+}
+
+Legenda* ordenarLegendaC (Legenda *velhaLegenda, int tamanho){
+	int i, j, min, aux;
+	Legenda trocaLegenda, *legenda;
+	legenda = velhaLegenda;
+
+	for(i=0; i<=(tamanho); i++){
+		min = i;
+		for(j=(i+1); j<tamanho; j++){
+			if(strcmp(legenda[j].candidato.nome, legenda[min].candidato.nome)>1){
+				min = j;
+			}
+		}
+		if(0!=(strcmp(legenda[i].candidato.nome, legenda[min].candidato.nome))){
+			trocaLegenda = legenda[i];
+			legenda[i] = legenda[min];
+			legenda[min] = trocaLegenda;
+		}
+	}
+	return legenda;
+}
+//Objetivo: Exibir todas as legendas  
+//Entrada: legenda e posicao da legenda.
+//Retorno: total de itens exibidos corretamente, 0 caso nenhum dado encontrado.
+int exibirLegenda(Legenda *legenda, int tamanho){
+	int i, escolha;
+	if(strlen(legenda[0].candidato.nome)==0){
+		printf(ANSI_COLOR_RED "\n\tNenhum dado encontrado\n" ANSI_COLOR_RESET );
+		return 0;
+	}
+	getchar();
+	printf(ANSI_COLOR_GREEN "\tComo deseja exibir ordenado pelo nome " ANSI_COLOR_RED "(D-Decrescente; C-Crescente): " ANSI_COLOR_RESET);
+
+	escolha = getchar();
+	while(escolha!='D' && escolha!='C'){
+		printf(ANSI_COLOR_GREEN "\tError, valor incorreto. Como deseja exibir ordenado pelo nome " ANSI_COLOR_RED "(D-Decrescente; C-Crescente): " ANSI_COLOR_RESET);
+		escolha = getchar();
+	}
+	switch(escolha){
+		case 'D':
+			imprimirLegenda(ordenarLegendaD(legenda, tamanho), tamanho );
+			break;
+		case 'C':
+			imprimirLegenda(ordenarLegendaC(legenda, tamanho), tamanho);
+			break;
+	}
+
 	return i;
 }
 
